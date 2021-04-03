@@ -36,7 +36,7 @@ public class ResponseResultHandler implements ResponseBodyAdvice<Object> {
         ServletRequestAttributes sra = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
         HttpServletRequest request = sra.getRequest();
         // 判断请求，是否有包装标记
-        com.bear.animal.util.ResponseResult responseResultAnn = (com.bear.animal.util.ResponseResult) request.getAttribute(RESPONSE_RESULT_ANN);
+        ResponseResult responseResultAnn = (ResponseResult) request.getAttribute(RESPONSE_RESULT_ANN);
         return responseResultAnn == null ? false : true;
     }
 

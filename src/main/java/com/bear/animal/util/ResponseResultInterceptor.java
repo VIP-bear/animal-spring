@@ -28,11 +28,11 @@ public class ResponseResultInterceptor implements HandlerInterceptor {
             final Class<?> clazz = handlerMethod.getBeanType();
             final Method method = handlerMethod.getMethod();
             // 判断是否在类对象上添加了@ResponseResult注解
-            if (clazz.isAnnotationPresent(com.bear.animal.util.ResponseResult.class)) {
+            if (clazz.isAnnotationPresent(ResponseResult.class)) {
                 // 设置此请求返回体需要包装，往下传递，在ResponseBodyAdvice接口进行判断
-                request.setAttribute(RESPONSE_RESULT_ANN, clazz.getAnnotation(com.bear.animal.util.ResponseResult.class));
-            } else if (method.isAnnotationPresent(com.bear.animal.util.ResponseResult.class)) {  // 判断在方法体上是否有@ResponseResult注解
-                request.setAttribute(RESPONSE_RESULT_ANN, method.getAnnotation(com.bear.animal.util.ResponseResult.class));
+                request.setAttribute(RESPONSE_RESULT_ANN, clazz.getAnnotation(ResponseResult.class));
+            } else if (method.isAnnotationPresent(ResponseResult.class)) {  // 判断在方法体上是否有@ResponseResult注解
+                request.setAttribute(RESPONSE_RESULT_ANN, method.getAnnotation(ResponseResult.class));
             }
         }
         return true;
