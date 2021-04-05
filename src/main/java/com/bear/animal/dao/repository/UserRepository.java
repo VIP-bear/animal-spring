@@ -12,12 +12,18 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     /**
-     * 根据用户名和密码查询用户
-     * @param username 用户名
-     * @param password 密码
+     * 根据邮箱查找用户
+     * @param email 邮箱
      * @return
      */
-    @Query(value = "select * from al_user where username = ?1 and password = ?2", nativeQuery = true)
-    UserEntity findByUsernameAndPassword(String username, String password);
+    @Query(value = "select * from al_user where email = ?1", nativeQuery = true)
+    UserEntity findByEmail(String email);
 
+    /**
+     * 根据用户名查找用户
+     * @param username 用户名
+     * @return
+     */
+    @Query(value = "select * from al_user where username = ?1", nativeQuery = true)
+    UserEntity findByUsername(String username);
 }

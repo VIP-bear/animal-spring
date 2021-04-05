@@ -23,6 +23,7 @@ public enum ResultCode {
     USER_ACCOUNT_FORBIDDEN(2003, "账号已被禁用"),
     USER_NOT_EXIST(2004, "用户不存在"),
     USER_HAS_EXIST(2005, "用户已存在"),
+    USER_EMAIL_EXIST(2006, "邮箱已被注册"),
     /* 系统错误: 5001-5999 */
     SYSTEM_ERROR(5001, "系统异常")
     ;

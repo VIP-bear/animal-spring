@@ -49,6 +49,6 @@ public class ResponseResultHandler implements ResponseBodyAdvice<Object> {
             return Result.failure(errorResult.getResultCode(), errorResult.getErrors());
         }
         log.info("操作成功...");
-        return Result.success(body);
+        return body;
     }
 }
