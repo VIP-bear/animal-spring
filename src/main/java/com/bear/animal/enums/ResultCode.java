@@ -11,7 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResultCode {
 
-    SUCCESS(200, "成功"),
+    SUCCESS(200, "操作成功"),
     /* 参数错误: 1001-1999 */
     PARAM_IS_INVALID(1001, "参数无效"),
     PARAM_IS_BLANK(1002, "参数为空"),
@@ -24,6 +24,7 @@ public enum ResultCode {
     USER_NOT_EXIST(2004, "用户不存在"),
     USER_HAS_EXIST(2005, "用户已存在"),
     USER_EMAIL_EXIST(2006, "邮箱已被注册"),
+    USER_UPDATE_FAIL(2007, "信息更新失败"),
     /* 系统错误: 5001-5999 */
     SYSTEM_ERROR(5001, "系统异常")
     ;

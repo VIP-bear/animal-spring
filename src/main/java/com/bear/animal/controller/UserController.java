@@ -2,6 +2,7 @@ package com.bear.animal.controller;
 
 import com.bear.animal.controller.req.LoginReq;
 import com.bear.animal.controller.req.RegisterReq;
+import com.bear.animal.controller.req.UpdateUserMessageReq;
 import com.bear.animal.enums.ResultCode;
 import com.bear.animal.except.BusinessException;
 import com.bear.animal.service.IUserService;
@@ -44,9 +45,23 @@ public class UserController {
     @PostMapping("/user/register")
     @ResponseBody
     @ResponseResult
-    public <T> T register(RegisterReq registerMessage) {
+    public <T> T register(@RequestBody RegisterReq registerMessage) {
         log.info("registerMessage: {}", registerMessage);
         return (T) userService.register(registerMessage);
+    }
+
+    /**
+     * 更新用户信息请求
+     * @param updateUserMessage 用户信息
+     * @param <T>
+     * @return
+     */
+    @PostMapping("/user/update_message")
+    @ResponseBody
+    @ResponseResult
+    public <T> T updateUserMessage(@RequestBody UpdateUserMessageReq updateUserMessage) {
+        log.info("updateUserMessage: {}", updateUserMessage);
+        return (T) userService.updateUserMessage(updateUserMessage);
     }
 
 }

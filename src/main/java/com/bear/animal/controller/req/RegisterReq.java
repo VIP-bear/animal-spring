@@ -4,6 +4,8 @@ import lombok.Data;
 
 /**
  * 注册请求数据
+ * @author bear
+ * @date 2021年04月06日 22:59
  */
 @Data
 public class RegisterReq {

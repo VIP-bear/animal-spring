@@ -3,20 +3,26 @@ package com.bear.animal.controller.req;
 import lombok.Data;
 
 /**
- * 登录请求数据
+ * 更新用户信息
  * @author bear
  * @date 2021年04月06日 22:59
  */
 @Data
-public class LoginReq {
+public class UpdateUserMessageReq {
 
     /**
-     * 用户名（用户名/邮箱）
+     * 用户id
      */
-    private String username;
+    private Long user_id;
 
     /**
      * 密码
      */
     private String password;
+
+    /**
+     * 用户描述
+     */
+    private String user_introduction;
+
 }

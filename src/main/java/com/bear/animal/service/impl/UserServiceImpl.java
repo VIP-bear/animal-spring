@@ -3,6 +3,7 @@ package com.bear.animal.service.impl;
 import com.bear.animal.controller.Result;
 import com.bear.animal.controller.req.LoginReq;
 import com.bear.animal.controller.req.RegisterReq;
+import com.bear.animal.controller.req.UpdateUserMessageReq;
 import com.bear.animal.controller.res.LoginResult;
 import com.bear.animal.controller.res.RegisterResult;
 import com.bear.animal.dao.entity.UserEntity;
@@ -99,6 +100,8 @@ public class UserServiceImpl implements IUserService {
         userEntity.setPassword(passwordEncoder.encode(registerMessage.getPassword()));
         userEntity.setEmail(registerMessage.getEmail());
         userEntity.setCreate_time(new Timestamp(System.currentTimeMillis()));
+        userEntity.setAttention_count(0);
+        userEntity.setFollow_count(0);
         UserEntity res = userRepository.save(userEntity);
         if (null == res) {
             // 注册失败，系统异常
@@ -115,4 +118,24 @@ public class UserServiceImpl implements IUserService {
         return Result.success(registerResult);
     }
 
+    /**
+     * 更新用户信息
+     *
+     * @param updateUserMessage 更新信息
+     * @return
+     */
+    @Transactional
+    @Override
+    public Result updateUserMessage(UpdateUserMessageReq updateUserMessage) {
+        Long userId = updateUserMessage.getUser_id();
+        String password = passwordEncoder.encode(updateUserMessage.getPassword()).toString();
+        String introduction = updateUserMessage.getUser_introduction();
+        UserEntity res = userRepository.updateByUserId(userId, password, introduction);
+        if (null == res) {
+            // 更新失败
+            return Result.failure(ResultCode.USER_UPDATE_FAIL);
+        }
+        // 更新成功
+        return Result.success();
+    }
 }
