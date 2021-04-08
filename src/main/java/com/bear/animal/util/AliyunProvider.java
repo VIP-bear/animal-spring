@@ -6,6 +6,7 @@ import com.aliyun.oss.model.ObjectMetadata;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Decoder;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,23 +20,23 @@ import java.util.UUID;
 @Component
 public class AliyunProvider {
 
-    @Value("${aliyun.file.endpoint}")
-    private static String endpoint;
+    @Value("${aliyun.oss.endpoint}")
+    private String endpoint;
 
-    @Value("${aliyun.file.bucket-name}")
-    private static String bucketName;
+    @Value("${aliyun.oss.bucket-name}")
+    private String bucketName;
 
-    @Value("${aliyun.file.folder}")
-    private static String folder;
+    @Value("${aliyun.oss.folder}")
+    private String folder;
 
-    @Value("${aliyun.file.public-key}")
-    private static String accessKeyId;
+    @Value("${aliyun.oss.public-key}")
+    private String accessKeyId;
 
-    @Value("${aliyun.file.private-key}")
-    private static String accessKeySecret;
+    @Value("${aliyun.oss.private-key}")
+    private String accessKeySecret;
 
-    @Value("${aliyun.file.expires}")
-    private static Integer expires;
+    @Value("${aliyun.oss.policy.expires}")
+    private Integer expires;
 
     /**
      * 上传图片到服务器，返回图片url
@@ -58,7 +59,8 @@ public class AliyunProvider {
             objectMetadata.setContentDisposition("inline;filename=" + fileName);
             ossClient.putObject(bucketName, folder+subDirectory+fileName, uploadFile.getInputStream(), objectMetadata);
             // 获取图片url,第二个参数图片地址，第三个参数图片地址有效期
-            url = ossClient.generatePresignedUrl(bucketName, folder+subDirectory+fileName, new Date(new Date().getTime() + expires));
+            url = ossClient.generatePresignedUrl(bucketName, folder+subDirectory+fileName,
+                    new Date(new Date().getTime() + expires));
             if (url != null){
                 imageUrl = url.toString();
             }else {
@@ -71,5 +73,30 @@ public class AliyunProvider {
             return null;
         }
         return imageUrl;
+    }
+
+    /**
+     * base64转MultipartFile
+     * @param base64
+     * @return
+     */
+    public MultipartFile base64ToMultipart(String base64) {
+        try {
+            String[] baseStrs = base64.split(",");
+
+            BASE64Decoder decoder = new BASE64Decoder();
+            byte[] b = new byte[0];
+            b = decoder.decodeBuffer(baseStrs[1]);
+
+            for(int i = 0; i < b.length; ++i) {
+                if (b[i] < 0) {
+                    b[i] += 256;
+                }
+            }
+            return new BASE64DecodeMultipartFile(b, baseStrs[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

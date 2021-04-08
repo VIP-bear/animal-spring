@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -130,12 +131,17 @@ public class UserServiceImpl implements IUserService {
         Long userId = updateUserMessage.getUser_id();
         String password = passwordEncoder.encode(updateUserMessage.getPassword()).toString();
         String introduction = updateUserMessage.getUser_introduction();
-        UserEntity res = userRepository.updateByUserId(userId, password, introduction);
-        if (null == res) {
+        int effectRow = userRepository.updateByUserId(userId, password, introduction);
+        if (effectRow == 0) {
             // 更新失败
             return Result.failure(ResultCode.USER_UPDATE_FAIL);
         }
         // 更新成功
-        return Result.success();
+        Optional<UserEntity> userList = userRepository.findById(userId);
+        if (userList == null) {
+            // 发生系统异常
+            throw new BusinessException(ResultCode.SYSTEM_ERROR);
+        }
+        return Result.success(userList.get());
     }
 }

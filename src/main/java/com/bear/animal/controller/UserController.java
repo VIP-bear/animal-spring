@@ -3,8 +3,6 @@ package com.bear.animal.controller;
 import com.bear.animal.controller.req.LoginReq;
 import com.bear.animal.controller.req.RegisterReq;
 import com.bear.animal.controller.req.UpdateUserMessageReq;
-import com.bear.animal.enums.ResultCode;
-import com.bear.animal.except.BusinessException;
 import com.bear.animal.service.IUserService;
 import com.bear.animal.util.ResponseResult;
 import lombok.extern.slf4j.Slf4j;

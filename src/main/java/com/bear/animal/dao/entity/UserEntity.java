@@ -7,8 +7,9 @@ import java.sql.Timestamp;
 
 /**
  * 用户表
+ * @author bear
+ * @date 2021年04月05日 10:20
  */
-
 @Entity
 @Data
 @Table(name = "al_user")

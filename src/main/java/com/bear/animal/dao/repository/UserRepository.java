@@ -37,5 +37,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      */
     @Modifying
     @Query(value = "update al_user set password = ?2, user_introduction = ?3 where user_id = ?1", nativeQuery = true)
-    UserEntity updateByUserId(Long userId, String password, String introduction);
+    Integer updateByUserId(Long userId, String password, String introduction);
 }
