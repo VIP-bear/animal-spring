@@ -38,9 +38,6 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    // 设置redis缓存中的key
-    private final String key = "sessionId";
-
     /**
      * 登录
      *
@@ -64,11 +61,6 @@ public class UserServiceImpl implements IUserService {
         // 登录成功
         LoginResult loginResult = new LoginResult();
         BeanUtils.copyProperties(userEntity, loginResult);
-        // 随机生成一个sessionId
-        String sessionId = UUID.randomUUID().toString();
-        loginResult.setSession_id(sessionId);
-        // 将sessionId存入redis数据库中(key为sessionId, value为用户信息)
-        redisTemplate.boundHashOps(key).put(sessionId, loginResult);
         return Result.success(loginResult);
     }
 
@@ -111,11 +103,6 @@ public class UserServiceImpl implements IUserService {
         // 注册成功
         RegisterResult registerResult = new RegisterResult();
         BeanUtils.copyProperties(userEntity, registerResult);
-        // 随机生成一个sessionId
-        String sessionId = UUID.randomUUID().toString();
-        registerResult.setSession_id(sessionId);
-        // 将sessionId存入redis数据库中(key为sessionId, value为用户信息)
-        redisTemplate.boundHashOps(key).put(sessionId, registerResult);
         return Result.success(registerResult);
     }
 

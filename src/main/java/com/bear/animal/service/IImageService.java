@@ -16,4 +16,16 @@ public interface IImageService {
      * @return
      */
     Result uploadImage(UploadImageReq uploadImageMessage);
+
+    /**
+     * 获取每日排行榜图片
+     * @return
+     */
+    Result getRanking();
+
+    /**
+     * 根据图片id获取图片详细信息
+     * @return
+     */
+    Result getImageMessage(Long imageId, Long userId);
 }
