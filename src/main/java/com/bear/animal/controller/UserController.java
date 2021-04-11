@@ -1,5 +1,6 @@
 package com.bear.animal.controller;
 
+import com.bear.animal.controller.req.AttentionReq;
 import com.bear.animal.controller.req.LoginReq;
 import com.bear.animal.controller.req.RegisterReq;
 import com.bear.animal.controller.req.UpdateUserMessageReq;
@@ -60,6 +61,20 @@ public class UserController {
     public <T> T updateUserMessage(@RequestBody UpdateUserMessageReq updateUserMessage) {
         log.info("updateUserMessage: {}", updateUserMessage);
         return (T) userService.updateUserMessage(updateUserMessage);
+    }
+
+    /**
+     * 关注/取消用户
+     * @param attentionData
+     * @param <T>
+     * @return
+     */
+    @PostMapping("/user/attention")
+    @ResponseBody
+    @ResponseResult
+    public <T> T attentionUser(@RequestBody AttentionReq attentionData) {
+        log.info("attentionData: {}", attentionData);
+        return (T) userService.attentionUser(attentionData);
     }
 
 }

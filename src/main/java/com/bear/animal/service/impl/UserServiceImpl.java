@@ -1,26 +1,27 @@
 package com.bear.animal.service.impl;
 
 import com.bear.animal.controller.Result;
+import com.bear.animal.controller.req.AttentionReq;
 import com.bear.animal.controller.req.LoginReq;
 import com.bear.animal.controller.req.RegisterReq;
 import com.bear.animal.controller.req.UpdateUserMessageReq;
 import com.bear.animal.controller.res.LoginResult;
 import com.bear.animal.controller.res.RegisterResult;
+import com.bear.animal.dao.entity.AttentionEntity;
 import com.bear.animal.dao.entity.UserEntity;
+import com.bear.animal.dao.repository.AttentionRepository;
 import com.bear.animal.dao.repository.UserRepository;
 import com.bear.animal.enums.ResultCode;
 import com.bear.animal.except.BusinessException;
 import com.bear.animal.service.IUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * 用户服务接口实现
@@ -31,12 +32,12 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AttentionRepository attentionRepository;
+
     // 密码加密
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     /**
      * 登录
@@ -130,5 +131,37 @@ public class UserServiceImpl implements IUserService {
             throw new BusinessException(ResultCode.SYSTEM_ERROR);
         }
         return Result.success(userList.get());
+    }
+
+    /**
+     * 关注/取消用户
+     *
+     * @param attentionData
+     * @return
+     */
+    @Transactional
+    @Override
+    public Result attentionUser(AttentionReq attentionData) {
+        int state = attentionData.getState();
+        if (state == 0) {
+            // 0: 取消关注
+            int effectRow = attentionRepository.deleteByUserIdAndAttentionUserId(attentionData.getUser_id(),
+                    attentionData.getAttention_user_id());
+            if (effectRow == 0) {
+                return Result.failure(ResultCode.FAIL);
+            }
+        } else {
+            // 1: 关注
+            AttentionEntity attentionEntity = new AttentionEntity();
+            UserEntity userEntity = new UserEntity();
+            userEntity.setUser_id(attentionData.getUser_id());
+            attentionEntity.setUser(userEntity);
+            attentionEntity.setAttention_user_id(attentionData.getAttention_user_id());
+            AttentionEntity res = attentionRepository.save(attentionEntity);
+            if (null == res) {
+                return Result.failure(ResultCode.FAIL);
+            }
+        }
+        return Result.success();
     }
 }

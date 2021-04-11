@@ -24,10 +24,10 @@ public class ImageMessageResult {
     private UserEntity user;
 
     // 是否关注
-    private boolean isAttention;
+    private boolean attention;
 
     // 是否收藏
-    private boolean isFavorites;
+    private boolean favorites;
 
     // 用户图片集
     private List<String> urls;

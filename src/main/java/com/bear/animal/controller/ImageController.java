@@ -1,14 +1,15 @@
 package com.bear.animal.controller;
 
 import com.bear.animal.controller.req.UploadImageReq;
+import com.bear.animal.service.IBehaviorService;
+import com.bear.animal.service.IFavoritesService;
 import com.bear.animal.service.IImageService;
+import com.bear.animal.service.IRecommendService;
 import com.bear.animal.util.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.websocket.server.PathParam;
 
 /**
  * 图片操作控制层
@@ -21,6 +22,15 @@ public class ImageController {
 
     @Autowired
     private IImageService imageService;
+
+    @Autowired
+    private IBehaviorService behaviorService;
+
+    @Autowired
+    private IFavoritesService favoritesService;
+
+    @Autowired
+    private IRecommendService recommendService;
 
     /**
      * 上传图片请求
@@ -49,18 +59,70 @@ public class ImageController {
     }
 
     /**
+     * 根据用户推荐图片
+     * @param user_id
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/image/recommend/{user_id}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T getRecommendImage(@PathVariable("user_id") String user_id) {
+        Long userId = Long.parseLong(user_id);
+        return (T) recommendService.getRecommendImage(userId);
+    }
+
+    /**
      * 根据图片id获取图片详细信息
-     * @param imageId 图片id
+     * @param image_id 图片id
+     * @param user_id 用户id
      * @param <T>
      * @return
      */
     @GetMapping("/image/{image_id}/{user_id}")
     @ResponseBody
     @ResponseResult
-    public <T> T getImageMessage(@PathVariable("image_id") String imageId,
-                                 @PathVariable("user_id") String userId)  {
-        log.info("imageId: {}, userId: {}", imageId, userId);
-        return (T) imageService.getImageMessage(Long.parseLong(imageId), Long.parseLong(userId));
+    public <T> T getImageMessage(@PathVariable("image_id") String image_id,
+                                 @PathVariable("user_id") String user_id)  {
+        log.info("imageId: {}, userId: {}", image_id, user_id);
+        Long userId = Long.parseLong(user_id);
+        Long imageId = Long.parseLong(image_id);
+        behaviorService.updateBehaviorScore(userId, imageId, 1);
+        imageService.updateImageViewCount(imageId);
+        return (T) imageService.getImageMessage(imageId, userId);
+    }
+
+    /**
+     * 收藏/取消收藏图片
+     * @param image_id 图片id
+     * @param user_id 用户id
+     * @param flag 0表示取消收藏，1表示收藏
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/image/favorites/{image_id}/{user_id}/{flag}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T favoritesImage(@PathVariable("image_id") String image_id,
+                                @PathVariable("user_id") String user_id,
+                                @PathVariable("flag") String flag) {
+        log.info("imageId: {}, userId: {}, flag: {}", image_id, user_id, flag);
+        Long userId = Long.parseLong(user_id);
+        Long imageId = Long.parseLong(image_id);
+        int flagNum = Integer.parseInt(flag);
+        boolean state = false;
+        if (flagNum == 1) {
+            // 收藏
+            state = true;
+            behaviorService.updateBehaviorScore(userId, imageId, 3);
+            imageService.updateImageFavoritesCount(imageId, 1);
+        } else {
+            // 取消收藏
+            state = false;
+            behaviorService.updateBehaviorScore(userId, imageId, -3);
+            imageService.updateImageFavoritesCount(imageId, -1);
+        }
+        return (T) favoritesService.updateImageFavoritesState(imageId, userId, state);
     }
 
 }

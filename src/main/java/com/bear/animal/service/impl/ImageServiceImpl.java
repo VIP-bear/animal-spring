@@ -59,8 +59,8 @@ public class ImageServiceImpl implements IImageService {
     // 设置redis缓存中排行榜的key
     private final String key = "ranking";
 
-    // 设置redis缓存中排行榜过期时间为1小时
-    private final long validTime = 1;
+    // 设置redis缓存中排行榜过期时间为10分钟
+    private final long validTime = 10;
 
     /**
      * 上传图片
@@ -86,10 +86,10 @@ public class ImageServiceImpl implements IImageService {
         // 保存图片信息到数据库中
         ImageEntity imageEntity = new ImageEntity();
         BeanUtils.copyProperties(uploadImageMessage, imageEntity);
-        if (imageEntity.getImage_title() == null) {
+        if (imageEntity.getImage_title().equals("")) {
             imageEntity.setImage_title("no title");
         }
-        if (imageEntity.getImage_description() == null) {
+        if (imageEntity.getImage_description().equals("")) {
             imageEntity.setImage_description("");
         }
         imageEntity.setImage_url(image_url);
@@ -153,7 +153,7 @@ public class ImageServiceImpl implements IImageService {
         }
         // 将排行榜存入缓存中
         // 将sessionId存入redis数据库中(key为ranking, value排行榜信息)
-        redisTemplate.opsForValue().set(key, imageList, validTime, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set(key, imageList, validTime, TimeUnit.MINUTES);
         return Result.success(imageList);
     }
 
@@ -212,5 +212,28 @@ public class ImageServiceImpl implements IImageService {
         imageResult.setUrls(urls);
         imageResult.setTags(list);
         return Result.success(imageResult);
+    }
+
+    /**
+     * 根据图片id更新图片浏览数
+     *
+     * @param imageId
+     */
+    @Transactional
+    @Override
+    public void updateImageViewCount(Long imageId) {
+        imageRepository.updateImageViewCountByImageId(imageId);
+    }
+
+    /**
+     * 根据图片id更新图片收藏数
+     *
+     * @param imageId
+     * @param count
+     */
+    @Transactional
+    @Override
+    public void updateImageFavoritesCount(Long imageId, int count) {
+        imageRepository.updateImageFavoritesCountByImageId(imageId, count);
     }
 }

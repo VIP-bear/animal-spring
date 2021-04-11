@@ -1,6 +1,7 @@
 package com.bear.animal.service;
 
 import com.bear.animal.controller.Result;
+import com.bear.animal.controller.req.AttentionReq;
 import com.bear.animal.controller.req.LoginReq;
 import com.bear.animal.controller.req.RegisterReq;
 import com.bear.animal.controller.req.UpdateUserMessageReq;
@@ -30,4 +31,11 @@ public interface IUserService {
      * @return
      */
     Result updateUserMessage(UpdateUserMessageReq updateUserMessage);
+
+    /**
+     * 关注/取消用户
+     * @param attentionData
+     * @return
+     */
+    Result attentionUser(AttentionReq attentionData);
 }

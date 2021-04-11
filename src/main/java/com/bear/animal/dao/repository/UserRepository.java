@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 数据库用户表操作
  */
@@ -38,4 +40,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Modifying
     @Query(value = "update al_user set password = ?2, user_introduction = ?3 where user_id = ?1", nativeQuery = true)
     Integer updateByUserId(Long userId, String password, String introduction);
+
+    /**
+     * 随机获取n个用户
+     * @param n
+     * @return
+     */
+    @Query(value = "select * from al_user where user_id >= ((select max(user_id) from al_user) - " +
+            "(select min(user_id) from al_user)) * rand() + (select min(user_id) from al_user) limit ?1", nativeQuery = true)
+    List<UserEntity> getUserByRandom(int n);
 }

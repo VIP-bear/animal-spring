@@ -28,4 +28,17 @@ public interface IImageService {
      * @return
      */
     Result getImageMessage(Long imageId, Long userId);
+
+    /**
+     * 根据图片id更新图片浏览数
+     * @param imageId
+     */
+    void updateImageViewCount(Long imageId);
+
+    /**
+     * 根据图片id更新图片收藏数
+     * @param imageId
+     * @param count
+     */
+    void updateImageFavoritesCount(Long imageId, int count);
 }

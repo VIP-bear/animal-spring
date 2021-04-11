@@ -24,6 +24,6 @@ public class AttentionEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private UserEntity user;
 
-    @Column(columnDefinition = "int(11) default 0 comment '关注用户id'")
-    private Integer attention_user_id;
+    @Column(nullable = false, columnDefinition = "int(20) comment '关注用户id'")
+    private Long attention_user_id;
 }

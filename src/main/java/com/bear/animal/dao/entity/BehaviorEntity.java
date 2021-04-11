@@ -19,16 +19,12 @@ public class BehaviorEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long behavior_id;
 
-    // 外键，用户id
-    @ManyToOne(targetEntity = UserEntity.class)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(nullable = false, columnDefinition = "int(20) comment '用户id'")
+    private Long user_id;
 
-    // 外键，图片id
-    @ManyToOne(targetEntity = ImageEntity.class)
-    @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
-    private ImageEntity image;
+    @Column(nullable = false, columnDefinition = "int(20) comment '图片id'")
+    private Long image_id;
 
     @Column(columnDefinition = "int(2) default 0 comment '用户行为分数'")
-    private Integer user_behavior;
+    private Integer user_behavior_score;
 }

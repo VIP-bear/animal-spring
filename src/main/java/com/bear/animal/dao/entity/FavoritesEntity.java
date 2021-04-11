@@ -24,9 +24,7 @@ public class FavoritesEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private UserEntity user;
 
-    // 外键，图片id
-    @ManyToOne(targetEntity = ImageEntity.class)
-    @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
-    private ImageEntity image;
+    @Column(nullable = false, columnDefinition = "int(11) comment '图片id'")
+    private Long image_id;
 
 }
