@@ -11,6 +11,7 @@ import com.bear.animal.service.IRecommendService;
 import com.bear.animal.util.RecommendImageProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,9 @@ public class RecommendServiceImpl implements IRecommendService {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     // 用户数量
     private static final int n = 10;
 
@@ -44,6 +48,12 @@ public class RecommendServiceImpl implements IRecommendService {
 
     // 推荐图片数量
     private static final int recommendNum = 18;
+
+    // 设置redis缓存中推荐图片的key
+    private final String key = "recommend";
+
+    // 设置redis缓存中推荐图片过期时间为10分钟
+    private final long validTime = 10;
 
     /**
      * 推荐图片给用户
@@ -54,6 +64,10 @@ public class RecommendServiceImpl implements IRecommendService {
     @Transactional
     @Override
     public Result getRecommendImage(Long userId) {
+        List<ImageEntity> recommendImageList;
+        // 从redis缓存中根据userId获取推荐图片
+//        recommendImageList = (List<ImageEntity>) redisTemplate.boundHashOps(key).get(userId);
+
         // 随机获取n个用户
         List<UserEntity> userList = userRepository.getUserByRandom(n);
         log.info("获取的n个用户: {}", userList);
@@ -79,7 +93,9 @@ public class RecommendServiceImpl implements IRecommendService {
         List<Long> recommendImageIdList = recommendImageProvider.recommendImage(userId, recommendNum, userAndImageMap);
         log.info("推荐图片id集: {}", recommendImageIdList);
         // 查询推荐的图片
-        List<ImageEntity> recommendImageList = imageRepository.findAllById(recommendImageIdList);
+        recommendImageList = imageRepository.findAllById(recommendImageIdList);
+        // 将推荐图片存入缓存中
+//        redisTemplate.boundHashOps(key).put(userId, recommendImageList);
         return Result.success(recommendImageList);
     }
 

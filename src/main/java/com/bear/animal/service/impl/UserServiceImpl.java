@@ -5,11 +5,14 @@ import com.bear.animal.controller.req.AttentionReq;
 import com.bear.animal.controller.req.LoginReq;
 import com.bear.animal.controller.req.RegisterReq;
 import com.bear.animal.controller.req.UpdateUserMessageReq;
+import com.bear.animal.controller.res.AttentionMessage;
 import com.bear.animal.controller.res.LoginResult;
 import com.bear.animal.controller.res.RegisterResult;
 import com.bear.animal.dao.entity.AttentionEntity;
+import com.bear.animal.dao.entity.ImageEntity;
 import com.bear.animal.dao.entity.UserEntity;
 import com.bear.animal.dao.repository.AttentionRepository;
+import com.bear.animal.dao.repository.ImageRepository;
 import com.bear.animal.dao.repository.UserRepository;
 import com.bear.animal.enums.ResultCode;
 import com.bear.animal.except.BusinessException;
@@ -21,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,6 +39,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private AttentionRepository attentionRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     // 密码加密
     @Autowired
@@ -150,6 +158,10 @@ public class UserServiceImpl implements IUserService {
             if (effectRow == 0) {
                 return Result.failure(ResultCode.FAIL);
             }
+            // 更新用户粉丝数
+            userRepository.updateFollowCountByUserId(attentionData.getAttention_user_id(), -1);
+            // 更新用户关注数
+            userRepository.updateAttentionCountByUserId(attentionData.getUser_id(), -1);
         } else {
             // 1: 关注
             AttentionEntity attentionEntity = new AttentionEntity();
@@ -161,7 +173,61 @@ public class UserServiceImpl implements IUserService {
             if (null == res) {
                 return Result.failure(ResultCode.FAIL);
             }
+            // 更新用户粉丝数
+            userRepository.updateFollowCountByUserId(attentionData.getAttention_user_id(), 1);
+            // 更新用户关注数
+            userRepository.updateAttentionCountByUserId(attentionData.getUser_id(), 1);
         }
         return Result.success();
+    }
+
+    /**
+     * 获取关注用户列表
+     *
+     * @param userId 用户id
+     * @param offset 偏移量
+     * @param size 偏移量
+     * @return
+     */
+    @Transactional
+    @Override
+    public Result getAttentionUserList(Long userId, Integer offset, Integer size) {
+        // 获取关注用户id
+        List<Long> attentionUserIdList = attentionRepository.findByUserIdOffset(userId, offset, size);
+
+        // 根据用户id获取图片
+        List<AttentionMessage> res = new ArrayList<>();
+        for (Long id : attentionUserIdList) {
+            List<ImageEntity> imageList = imageRepository.findByUserId(id);
+            UserEntity user = new UserEntity();
+            if (imageList == null) {
+                user = userRepository.findById(id).get();
+            } else {
+                user = imageList.get(0).getUser();
+            }
+            AttentionMessage attentionMessage = new AttentionMessage();
+            attentionMessage.setUser(user);
+            attentionMessage.setImageList(imageList);
+            res.add(attentionMessage);
+        }
+        return Result.success(res);
+    }
+
+    /**
+     * 获取粉丝列表
+     *
+     * @param userId
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Override
+    public Result getFollowUserList(Long userId, Integer offset, Integer size) {
+        List<AttentionEntity> attentionUserList = attentionRepository.findByAttentionUserIdOffset(userId, offset, size);
+        List<UserEntity> userListRes = new ArrayList<>();
+        for (AttentionEntity attentionEntity : attentionUserList) {
+            userListRes.add(attentionEntity.getUser());
+        }
+        return Result.success(userListRes);
     }
 }

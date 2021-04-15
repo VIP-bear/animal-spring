@@ -2,6 +2,7 @@ package com.bear.animal.service.impl;
 
 import com.bear.animal.controller.Result;
 import com.bear.animal.controller.req.UploadImageReq;
+import com.bear.animal.controller.res.AttentionUserImageResult;
 import com.bear.animal.controller.res.ImageMessageResult;
 import com.bear.animal.dao.entity.ImageEntity;
 import com.bear.animal.dao.entity.TagEntity;
@@ -20,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -137,7 +135,6 @@ public class ImageServiceImpl implements IImageService {
         List<ImageEntity> imageList = (List<ImageEntity>) redisTemplate.opsForValue().get(key);
         if (null != imageList && imageList.size() != 0) {
             // 缓存命中
-            log.info("imageList: {}", imageList);
             return Result.success(imageList);
         }
 
@@ -152,7 +149,7 @@ public class ImageServiceImpl implements IImageService {
             throw new BusinessException(ResultCode.SYSTEM_ERROR);
         }
         // 将排行榜存入缓存中
-        // 将sessionId存入redis数据库中(key为ranking, value排行榜信息)
+        // 将排行榜存入redis数据库中(key为ranking, value排行榜信息)
         redisTemplate.opsForValue().set(key, imageList, validTime, TimeUnit.MINUTES);
         return Result.success(imageList);
     }
@@ -235,5 +232,49 @@ public class ImageServiceImpl implements IImageService {
     @Override
     public void updateImageFavoritesCount(Long imageId, int count) {
         imageRepository.updateImageFavoritesCountByImageId(imageId, count);
+    }
+
+    /**
+     * 根据用户id获取关注用户的图片
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public Result getAttentionUserImage(Long userId) {
+        // 获取关注用户id集合
+        List<Long> attentionUserIdList = attentionRepository.findByUserId(userId);
+        if (attentionUserIdList == null) {
+            return Result.success();
+        }
+        List<AttentionUserImageResult> res = new ArrayList<>();
+        for (Long id : attentionUserIdList) {
+            // 根据用户id获取图片
+            List<ImageEntity> imageList = imageRepository.findByUserId(id);
+            if (imageList != null) {
+                for (ImageEntity image : imageList) {
+                    AttentionUserImageResult attentionUserImageResult = new AttentionUserImageResult();
+                    BeanUtils.copyProperties(image, attentionUserImageResult);
+                    res.add(attentionUserImageResult);
+                }
+            }
+        }
+        return Result.success(res);
+    }
+
+    /**
+     * 获取用户收藏图片列表
+     *
+     * @param userId
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Override
+    public Result getFavoritesImageList(Long userId, Integer offset, int size) {
+        // 获取图片id集合
+        List<Long> imageIdList = favoritesRepository.findByUserId(userId, offset, size);
+        List<ImageEntity> imageList = imageRepository.findAllById(imageIdList);
+        return Result.success(imageList);
     }
 }

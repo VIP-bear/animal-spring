@@ -49,4 +49,24 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query(value = "select * from al_user where user_id >= ((select max(user_id) from al_user) - " +
             "(select min(user_id) from al_user)) * rand() + (select min(user_id) from al_user) limit ?1", nativeQuery = true)
     List<UserEntity> getUserByRandom(int n);
+
+    /**
+     * 根据用户id更新用户粉丝数
+     * @param user_id
+     * @param followCount
+     * @return
+     */
+    @Modifying
+    @Query(value = "update al_user set follow_count = follow_count + ?2 where user_id = ?1", nativeQuery = true)
+    int updateFollowCountByUserId(Long user_id, int followCount);
+
+    /**
+     * 根据用户id更新用户关注数
+     * @param user_id
+     * @param attentionCount
+     * @return
+     */
+    @Modifying
+    @Query(value = "update al_user set attention_count = attention_count + ?2 where user_id = ?1", nativeQuery = true)
+    int updateAttentionCountByUserId(Long user_id, int attentionCount);
 }

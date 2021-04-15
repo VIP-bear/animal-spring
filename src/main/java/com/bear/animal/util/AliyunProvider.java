@@ -72,6 +72,7 @@ public class AliyunProvider {
         }catch (IOException e){
             return null;
         }
+        imageUrl = imageUrl.split("\\?")[0];
         return imageUrl;
     }
 

@@ -73,6 +73,21 @@ public class ImageController {
     }
 
     /**
+     * 根据用户id获取关注用户的图片
+     * @param user_id
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/image/attention/{user_id}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T getAttentionUserImage(@PathVariable("user_id") String user_id) {
+        log.info("user_id: {}", user_id);
+        Long userId = Long.parseLong(user_id);
+        return (T) imageService.getAttentionUserImage(userId);
+    }
+
+    /**
      * 根据图片id获取图片详细信息
      * @param image_id 图片id
      * @param user_id 用户id
@@ -123,6 +138,24 @@ public class ImageController {
             imageService.updateImageFavoritesCount(imageId, -1);
         }
         return (T) favoritesService.updateImageFavoritesState(imageId, userId, state);
+    }
+
+    /**
+     * 获取用户收藏图片列表
+     * @param user_id
+     * @param offset
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/image/favorites/{user_id}/{offset}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T getFavoritesImageList(@PathVariable("user_id") String user_id,
+                                       @PathVariable("offset") String offset) {
+        log.info("user_id: {}, offset: {}", user_id, offset);
+        Long userId = Long.parseLong(user_id);
+        Integer offsetNum = Integer.parseInt(offset);
+        return (T) imageService.getFavoritesImageList(userId, offsetNum, 10);
     }
 
 }

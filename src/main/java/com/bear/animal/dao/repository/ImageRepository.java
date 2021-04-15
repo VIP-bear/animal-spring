@@ -58,4 +58,16 @@ public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
     @Modifying
     @Query(value = "update al_image set image_favorites_count = image_favorites_count + ?2 where image_id = ?1", nativeQuery = true)
     void updateImageFavoritesCountByImageId(Long imageId, int count);
+
+    /**
+     * 根据用户id查找图片
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from al_image where user_id = ?1 order by image_upload_time desc limit 10", nativeQuery = true)
+    List<ImageEntity> findByUserId(Long id);
+
+    @Modifying
+    @Query(value = "update al_image set image_url = ?1 where image_id = ?2", nativeQuery = true)
+    void updateImage(String image_url, Long image_id);
 }

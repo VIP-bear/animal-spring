@@ -38,4 +38,21 @@ public interface IUserService {
      * @return
      */
     Result attentionUser(AttentionReq attentionData);
+
+    /**
+     * 获取关注用户列表
+     * @param userId 用户id
+     * @param offset 偏移量
+     * @return
+     */
+    Result getAttentionUserList(Long userId, Integer offset, Integer size);
+
+    /**
+     * 获取粉丝列表
+     * @param userId
+     * @param offset
+     * @param size
+     * @return
+     */
+    Result getFollowUserList(Long userId, Integer offset, Integer size);
 }

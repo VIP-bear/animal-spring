@@ -41,4 +41,20 @@ public interface IImageService {
      * @param count
      */
     void updateImageFavoritesCount(Long imageId, int count);
+
+    /**
+     * 根据用户id获取关注用户的图片
+     * @param userId
+     * @return
+     */
+    Result getAttentionUserImage(Long userId);
+
+    /**
+     * 获取用户收藏图片列表
+     * @param userId
+     * @param offset
+     * @param size
+     * @return
+     */
+    Result getFavoritesImageList(Long userId, Integer offset, int size);
 }

@@ -77,4 +77,42 @@ public class UserController {
         return (T) userService.attentionUser(attentionData);
     }
 
+    /**
+     * 根据用户id获取关注用户列表
+     * @param user_id
+     * @param offset
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/user/attention_list/{user_id}/{offset}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T attentionUserList(@PathVariable("user_id") String user_id,
+                                   @PathVariable("offset") String offset) {
+        log.info("user_id: {}, offset: {}", user_id, offset);
+        Long userId = Long.parseLong(user_id);
+        Integer offsetNum = Integer.parseInt(offset);
+        return (T) userService.getAttentionUserList(userId, offsetNum, 10);
+    }
+
+    /**
+     * 根据用户id获取粉丝列表
+     * @param user_id
+     * @param offset
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/user/follow_list/{user_id}/{offset}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T followUserList(@PathVariable("user_id") String user_id,
+                                @PathVariable("offset") String offset) {
+        log.info("user_id: {}, offset: {}", user_id, offset);
+        Long userId = Long.parseLong(user_id);
+        Integer offsetNum = Integer.parseInt(offset);
+        return (T) userService.getFollowUserList(userId, offsetNum, 10);
+    }
+
+
+
 }

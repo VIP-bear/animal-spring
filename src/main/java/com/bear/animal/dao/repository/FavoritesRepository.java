@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 收藏数据库表操作
  * @author bear
@@ -32,4 +34,14 @@ public interface FavoritesRepository extends JpaRepository<FavoritesEntity, Long
     @Modifying
     @Query(value = "delete from al_favorites where image_id = ?1 and user_id = ?2", nativeQuery = true)
     int deleteFavoritesByImageIdAndUserId(Long imageId, Long userId);
+
+    /**
+     * 根据用户id获取图片id
+     * @param userId
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Query(value = "select image_id from al_favorites where user_id = ?1 limit ?2,?3", nativeQuery = true)
+    List<Long> findByUserId(Long userId, Integer offset, int size);
 }
