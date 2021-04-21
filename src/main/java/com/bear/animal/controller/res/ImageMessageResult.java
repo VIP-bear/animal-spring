@@ -30,6 +30,6 @@ public class ImageMessageResult {
     private boolean favorites;
 
     // 用户图片集
-    private List<String> urls;
+    private List<ImageEntity> imageList;
 
 }

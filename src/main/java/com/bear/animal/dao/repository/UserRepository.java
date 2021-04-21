@@ -69,4 +69,14 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Modifying
     @Query(value = "update al_user set attention_count = attention_count + ?2 where user_id = ?1", nativeQuery = true)
     int updateAttentionCountByUserId(Long user_id, int attentionCount);
+
+    /**
+     * 根据用户id更新标签
+     * @param userId
+     * @param tags
+     * @return
+     */
+    @Modifying
+    @Query(value = "update al_user set tags = ?2 where user_id = ?1", nativeQuery = true)
+    int updateTagsByUserId(Long userId, String tags);
 }

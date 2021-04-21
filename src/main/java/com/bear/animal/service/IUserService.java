@@ -55,4 +55,21 @@ public interface IUserService {
      * @return
      */
     Result getFollowUserList(Long userId, Integer offset, Integer size);
+
+    /**
+     * 获取用户上传图片列表
+     * @param userId
+     * @param offset
+     * @param size
+     * @return
+     */
+    Result getUploadImageList(Long userId, Integer offset, Integer size);
+
+    /**
+     * 根据用户id获取用户信息
+     * @param userId
+     * @return
+     */
+    Result getUserMessage(Long userId);
+
 }

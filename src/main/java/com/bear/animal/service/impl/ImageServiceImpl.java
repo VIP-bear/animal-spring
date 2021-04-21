@@ -106,8 +106,10 @@ public class ImageServiceImpl implements IImageService {
         // 保存标签到标签库中
         String[] tags = uploadImageMessage.getImage_tags().split("#");
         List<TagEntity> list = new ArrayList<>();
+        Set<String> set = new HashSet<>();  // 标签去重
         for (String tag : tags) {
-            if (tag == null || tag.equals("")) continue;
+            if (tag == null || tag.equals("") || set.contains(tag)) continue;
+            set.add(tag);
             TagEntity tagEntity = new TagEntity();
             tagEntity.setImage(res);
             tagEntity.setTag_name(tag);
@@ -118,7 +120,26 @@ public class ImageServiceImpl implements IImageService {
             // 保存失败，系统异常
             throw new BusinessException(ResultCode.SYSTEM_ERROR);
         }
-        // 保存成功
+        // 保存标签到用户信息中
+        UserEntity user = userRepository.findById(uploadImageMessage.getUser_id()).get();
+        if (user.getTags() != null) {
+            String[] userTags = user.getTags().split("#");
+            for (String tag : userTags) {
+                if (tag == null || tag.equals("")) continue;
+                set.add(tag);
+            }
+        }
+        StringBuilder tagList = new StringBuilder();
+        for (String tag : set) {
+            tagList.append(tag + "#");
+        }
+        tagList.deleteCharAt(tagList.length()-1);
+        // 更新用户标签信息
+        int effectRow = userRepository.updateTagsByUserId(uploadImageMessage.getUser_id(), tagList.toString());
+        if (effectRow == 0) {
+            // 系统异常
+            throw new BusinessException(ResultCode.SYSTEM_ERROR);
+        }
         return Result.success();
     }
 
@@ -189,8 +210,8 @@ public class ImageServiceImpl implements IImageService {
             isFavorites = true;
         }
         // 根据用户id获取用户图片集
-        List<String> urls = imageRepository.findImageUrlByUserId(imageEntity.getUser().getUser_id());
-        if (null == urls) {
+        List<ImageEntity> imageList = imageRepository.findImageUrlByUserId(imageEntity.getUser().getUser_id(), 6);
+        if (null == imageList) {
             // 系统异常
             throw new BusinessException(ResultCode.SYSTEM_ERROR);
         }
@@ -206,7 +227,7 @@ public class ImageServiceImpl implements IImageService {
         imageResult.setUser(userEntity);
         imageResult.setAttention(isAttention);
         imageResult.setFavorites(isFavorites);
-        imageResult.setUrls(urls);
+        imageResult.setImageList(imageList);
         imageResult.setTags(list);
         return Result.success(imageResult);
     }
@@ -250,7 +271,7 @@ public class ImageServiceImpl implements IImageService {
         List<AttentionUserImageResult> res = new ArrayList<>();
         for (Long id : attentionUserIdList) {
             // 根据用户id获取图片
-            List<ImageEntity> imageList = imageRepository.findByUserId(id);
+            List<ImageEntity> imageList = imageRepository.findByUserId(id, 0, 10);
             if (imageList != null) {
                 for (ImageEntity image : imageList) {
                     AttentionUserImageResult attentionUserImageResult = new AttentionUserImageResult();

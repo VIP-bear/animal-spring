@@ -39,8 +39,8 @@ public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
      * @param user_id
      * @return
      */
-    @Query(value = "select image_url from al_image where user_id = ?1 order by image_upload_time desc limit 6", nativeQuery = true)
-    List<String> findImageUrlByUserId(Long user_id);
+    @Query(value = "select * from al_image where user_id = ?1 order by image_upload_time desc limit ?2", nativeQuery = true)
+    List<ImageEntity> findImageUrlByUserId(Long user_id, int size);
 
     /**
      * 根据图片id更新图片浏览数
@@ -61,13 +61,12 @@ public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
 
     /**
      * 根据用户id查找图片
-     * @param id
+     * @param userId
+     * @param offset
+     * @param size
      * @return
      */
-    @Query(value = "select * from al_image where user_id = ?1 order by image_upload_time desc limit 10", nativeQuery = true)
-    List<ImageEntity> findByUserId(Long id);
+    @Query(value = "select * from al_image where user_id = ?1 order by image_upload_time desc limit ?2,?3", nativeQuery = true)
+    List<ImageEntity> findByUserId(Long userId, Integer offset, Integer size);
 
-    @Modifying
-    @Query(value = "update al_image set image_url = ?1 where image_id = ?2", nativeQuery = true)
-    void updateImage(String image_url, Long image_id);
 }

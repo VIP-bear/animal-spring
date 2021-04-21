@@ -4,21 +4,20 @@ import com.bear.animal.dao.entity.ImageEntity;
 import com.bear.animal.dao.entity.UserEntity;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * 关注用户信息
+ * 推荐用户信息
  * @author bear
- * @date 2021年04月15日 18:36
+ * @date 2021年04月21日 19:54
  */
 @Data
-public class AttentionMessage implements Serializable {
+public class RecommendUserResult {
 
-    // 用户信息
     private UserEntity user;
 
-    // 用户图片
     private List<ImageEntity> imageList;
+
+    private boolean attention;
 
 }

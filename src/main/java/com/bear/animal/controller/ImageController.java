@@ -158,4 +158,22 @@ public class ImageController {
         return (T) imageService.getFavoritesImageList(userId, offsetNum, 10);
     }
 
+    /**
+     * 图片与图片相关联的图片
+     * @param image_id
+     * @param offset
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/image/recommend/{image_id}/{offset}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T getRecommendRelatedImage(@PathVariable("image_id") String image_id,
+                                          @PathVariable("offset") String offset) {
+        log.info("image_id: {}, offset: {}", image_id, offset);
+        Long imageId = Long.parseLong(image_id);
+        int offsetNum = Integer.parseInt(offset);
+        return (T) recommendService.getRecommendRelatedImage(imageId, offsetNum, 18);
+    }
+
 }

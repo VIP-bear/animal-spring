@@ -17,6 +17,7 @@ import com.bear.animal.dao.repository.UserRepository;
 import com.bear.animal.enums.ResultCode;
 import com.bear.animal.except.BusinessException;
 import com.bear.animal.service.IUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +32,7 @@ import java.util.Optional;
 /**
  * 用户服务接口实现
  */
+@Slf4j
 @Service
 public class UserServiceImpl implements IUserService {
 
@@ -186,7 +188,7 @@ public class UserServiceImpl implements IUserService {
      *
      * @param userId 用户id
      * @param offset 偏移量
-     * @param size 偏移量
+     * @param size 大小
      * @return
      */
     @Transactional
@@ -198,7 +200,7 @@ public class UserServiceImpl implements IUserService {
         // 根据用户id获取图片
         List<AttentionMessage> res = new ArrayList<>();
         for (Long id : attentionUserIdList) {
-            List<ImageEntity> imageList = imageRepository.findByUserId(id);
+            List<ImageEntity> imageList = imageRepository.findByUserId(id, 0, 4);
             UserEntity user = new UserEntity();
             if (imageList == null) {
                 user = userRepository.findById(id).get();
@@ -210,6 +212,7 @@ public class UserServiceImpl implements IUserService {
             attentionMessage.setImageList(imageList);
             res.add(attentionMessage);
         }
+        log.info("res: {}", res);
         return Result.success(res);
     }
 
@@ -229,5 +232,31 @@ public class UserServiceImpl implements IUserService {
             userListRes.add(attentionEntity.getUser());
         }
         return Result.success(userListRes);
+    }
+
+    /**
+     * 获取用户上传图片列表
+     *
+     * @param userId
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Override
+    public Result getUploadImageList(Long userId, Integer offset, Integer size) {
+        List<ImageEntity> imageList = imageRepository.findByUserId(userId, offset, size);
+        return Result.success(imageList);
+    }
+
+    /**
+     * 根据用户id获取用户信息
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public Result getUserMessage(Long userId) {
+        UserEntity userEntity = userRepository.findById(userId).get();
+        return Result.success(userEntity);
     }
 }

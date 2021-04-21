@@ -4,6 +4,7 @@ import com.bear.animal.controller.req.AttentionReq;
 import com.bear.animal.controller.req.LoginReq;
 import com.bear.animal.controller.req.RegisterReq;
 import com.bear.animal.controller.req.UpdateUserMessageReq;
+import com.bear.animal.service.IRecommendService;
 import com.bear.animal.service.IUserService;
 import com.bear.animal.util.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,9 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IRecommendService recommendService;
 
     /**
      * 用户登录请求
@@ -113,6 +117,46 @@ public class UserController {
         return (T) userService.getFollowUserList(userId, offsetNum, 10);
     }
 
+    /**
+     * 根据用户id获取用户上传图片列表
+     * @param user_id
+     * @param offset
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/user/upload_image/{user_id}/{offset}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T getUploadImageList(@PathVariable("user_id") String user_id,
+                                    @PathVariable("offset") String offset) {
+        log.info("user_id: {}, offset: {}", user_id, offset);
+        Long userId = Long.parseLong(user_id);
+        Integer offsetNum = Integer.parseInt(offset);
+        return (T) userService.getUploadImageList(userId, offsetNum, 10);
+    }
 
+    /**
+     * 根据用户id获取用户信息
+     * @param user_id
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/user/{user_id}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T getUserMessage(@PathVariable("user_id") String user_id) {
+        log.info("userId: {}", user_id);
+        Long userId = Long.parseLong(user_id);
+        return (T) userService.getUserMessage(userId);
+    }
+
+    @GetMapping("/user/recommend_user/{user_id}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T getRecommendUser(@PathVariable("user_id") String user_id) {
+        log.info("userId: {}", user_id);
+        Long userId = Long.parseLong(user_id);
+        return (T) recommendService.getRecommendUser(userId, 6);
+    }
 
 }

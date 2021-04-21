@@ -15,4 +15,20 @@ public interface IRecommendService {
      * @return
      */
     Result getRecommendImage(Long userId);
+
+    /**
+     * 推荐与图片相关联的图片
+     * @param imageId
+     * @param offset
+     * @param size
+     * @return
+     */
+    Result getRecommendRelatedImage(Long imageId, int offset, int size);
+
+    /**
+     * 推荐用户
+     * @param userId
+     * @return
+     */
+    Result getRecommendUser(Long userId, int size);
 }
