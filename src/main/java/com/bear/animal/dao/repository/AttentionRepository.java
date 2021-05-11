@@ -41,7 +41,7 @@ public interface AttentionRepository extends JpaRepository<AttentionEntity, Long
      * @param userId
      * @return
      */
-    @Query(value = "select attention_user_id from al_attention where user_id = ?1", nativeQuery = true)
+    @Query(value = "select attention_user_id from al_attention where user_id = ?1 order by attention_id desc", nativeQuery = true)
     List<Long> findByUserId(Long userId);
 
     /**

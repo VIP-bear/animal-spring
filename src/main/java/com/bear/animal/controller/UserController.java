@@ -150,6 +150,12 @@ public class UserController {
         return (T) userService.getUserMessage(userId);
     }
 
+    /**
+     * 根据用户id获取推荐用户
+     * @param user_id
+     * @param <T>
+     * @return
+     */
     @GetMapping("/user/recommend_user/{user_id}")
     @ResponseBody
     @ResponseResult

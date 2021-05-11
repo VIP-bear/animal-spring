@@ -69,4 +69,29 @@ public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
     @Query(value = "select * from al_image where user_id = ?1 order by image_upload_time desc limit ?2,?3", nativeQuery = true)
     List<ImageEntity> findByUserId(Long userId, Integer offset, Integer size);
 
+    /**
+     * 根据用户id集查找图片
+     * @param userIdList
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Query(value = "select * from al_image where user_id in ?1 order by image_upload_time desc limit ?2,?3", nativeQuery = true)
+    List<ImageEntity> findByUserIdList(List<Long> userIdList, int offset, int size);
+
+    /**
+     * 根据图片id查找图片标签
+     * @param imageId
+     * @return
+     */
+    @Query(value = "select image_tags from al_image where image_id = ?1", nativeQuery = true)
+    String findTagByImageId(Long imageId);
+
+    /**
+     * 根据图片id查找图片地址
+     * @param imageId
+     * @return
+     */
+    @Query(value = "select image_url from al_image where image_id = ?1", nativeQuery = true)
+    String findImageUrlByImageId(Long imageId);
 }

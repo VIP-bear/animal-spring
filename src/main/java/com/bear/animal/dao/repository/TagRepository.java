@@ -1,6 +1,5 @@
 package com.bear.animal.dao.repository;
 
-import com.bear.animal.dao.entity.ImageEntity;
 import com.bear.animal.dao.entity.TagEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

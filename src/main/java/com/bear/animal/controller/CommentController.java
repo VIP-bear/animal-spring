@@ -43,21 +43,18 @@ public class CommentController {
      * 根据图片id分页获取图片评论
      * @param image_id 图片id
      * @param offset 偏移量
-     * @param size 页大小
      * @param <T>
      * @return
      */
-    @GetMapping("/comment/{image_id}/{offset}/{size}")
+    @GetMapping("/comment/{image_id}/{offset}")
     @ResponseBody
     @ResponseResult
     public <T> T getComment(@PathVariable("image_id") String image_id,
-                            @PathVariable("offset") String offset,
-                            @PathVariable("size") String size) {
-        log.info("image_id: {}, offset: {}, size: {}", image_id, offset, size);
+                            @PathVariable("offset") String offset) {
+        log.info("image_id: {}, offset: {}", image_id, offset);
         Long imageId = Long.parseLong(image_id);
         int offsetNum = Integer.parseInt(offset);
-        int sizeNum = Integer.parseInt(size);
-        return (T) commentService.getComment(imageId, offsetNum, sizeNum);
+        return (T) commentService.getComment(imageId, offsetNum, 10);
     }
 
 }

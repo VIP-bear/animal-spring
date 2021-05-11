@@ -78,13 +78,15 @@ public class ImageController {
      * @param <T>
      * @return
      */
-    @GetMapping("/image/attention/{user_id}")
+    @GetMapping("/image/attention/{user_id}/{offset}")
     @ResponseBody
     @ResponseResult
-    public <T> T getAttentionUserImage(@PathVariable("user_id") String user_id) {
-        log.info("user_id: {}", user_id);
+    public <T> T getAttentionUserImage(@PathVariable("user_id") String user_id,
+                                       @PathVariable("offset") String offset) {
+        log.info("user_id: {}, offset: {}", user_id, offset);
         Long userId = Long.parseLong(user_id);
-        return (T) imageService.getAttentionUserImage(userId);
+        int offsetNum = Integer.parseInt(offset);
+        return (T) imageService.getAttentionUserImage(userId, offsetNum, 18);
     }
 
     /**
@@ -173,7 +175,7 @@ public class ImageController {
         log.info("image_id: {}, offset: {}", image_id, offset);
         Long imageId = Long.parseLong(image_id);
         int offsetNum = Integer.parseInt(offset);
-        return (T) recommendService.getRecommendRelatedImage(imageId, offsetNum, 18);
+        return (T) recommendService.getRecommendRelatedImage(imageId, offsetNum, 15);
     }
 
 }

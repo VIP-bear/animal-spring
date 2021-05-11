@@ -12,6 +12,7 @@ import com.bear.animal.enums.ResultCode;
 import com.bear.animal.except.BusinessException;
 import com.bear.animal.service.IImageService;
 import com.bear.animal.util.AliyunProvider;
+import com.bear.animal.util.similarity.PHashCalculate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +141,13 @@ public class ImageServiceImpl implements IImageService {
             // 系统异常
             throw new BusinessException(ResultCode.SYSTEM_ERROR);
         }
+        // 计算图片哈希
+        PHashCalculate pHashCalculate = new PHashCalculate();
+        String imageHash = pHashCalculate.pHash(pHashCalculate.getBufferedImage(image_url));
+        // 将图片哈希存入缓存中
+        HashMap<String, String> imageHashMap = (HashMap<String, String>) redisTemplate.opsForValue().get("image_hash");
+        imageHashMap.put(String.valueOf(res.getImage_id()), imageHash);
+        redisTemplate.opsForValue().set("image_hash", imageHashMap);
         return Result.success();
     }
 
@@ -262,25 +270,16 @@ public class ImageServiceImpl implements IImageService {
      * @return
      */
     @Override
-    public Result getAttentionUserImage(Long userId) {
+    public Result getAttentionUserImage(Long userId, int offset, int size) {
         // 获取关注用户id集合
         List<Long> attentionUserIdList = attentionRepository.findByUserId(userId);
         if (attentionUserIdList == null) {
             return Result.success();
         }
         List<AttentionUserImageResult> res = new ArrayList<>();
-        for (Long id : attentionUserIdList) {
-            // 根据用户id获取图片
-            List<ImageEntity> imageList = imageRepository.findByUserId(id, 0, 10);
-            if (imageList != null) {
-                for (ImageEntity image : imageList) {
-                    AttentionUserImageResult attentionUserImageResult = new AttentionUserImageResult();
-                    BeanUtils.copyProperties(image, attentionUserImageResult);
-                    res.add(attentionUserImageResult);
-                }
-            }
-        }
-        return Result.success(res);
+        // 根据用户id查找图片
+        List<ImageEntity> imageList =  imageRepository.findByUserIdList(attentionUserIdList, offset, size);
+        return Result.success(imageList);
     }
 
     /**

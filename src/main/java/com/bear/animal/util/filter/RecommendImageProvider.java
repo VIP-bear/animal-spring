@@ -1,4 +1,4 @@
-package com.bear.animal.util;
+package com.bear.animal.util.filter;
 
 import lombok.extern.slf4j.Slf4j;
 

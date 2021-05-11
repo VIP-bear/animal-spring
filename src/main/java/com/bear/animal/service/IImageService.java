@@ -47,7 +47,7 @@ public interface IImageService {
      * @param userId
      * @return
      */
-    Result getAttentionUserImage(Long userId);
+    Result getAttentionUserImage(Long userId, int offset, int size);
 
     /**
      * 获取用户收藏图片列表
