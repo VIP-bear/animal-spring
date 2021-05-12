@@ -71,7 +71,9 @@ public class DHashCalculate {
     public int distance(char[] c1, char[] c2) {
         int diffCount = 0;
         for (int i = 0; i < c1.length; i++) {
-            if (c1[i] != c2[i]) diffCount++;
+            if (c1[i] != c2[i]) {
+                diffCount++;
+            }
         }
         return diffCount;
     }
