@@ -109,7 +109,9 @@ public class ImageServiceImpl implements IImageService {
         List<TagEntity> list = new ArrayList<>();
         Set<String> set = new HashSet<>();  // 标签去重
         for (String tag : tags) {
-            if (tag == null || tag.equals("") || set.contains(tag)) continue;
+            if (tag == null || tag.equals("") || set.contains(tag)) {
+                continue;
+            }
             set.add(tag);
             TagEntity tagEntity = new TagEntity();
             tagEntity.setImage(res);
@@ -126,7 +128,9 @@ public class ImageServiceImpl implements IImageService {
         if (user.getTags() != null) {
             String[] userTags = user.getTags().split("#");
             for (String tag : userTags) {
-                if (tag == null || tag.equals("")) continue;
+                if (tag == null || tag.equals("")) {
+                    continue;
+                }
                 set.add(tag);
             }
         }
@@ -145,7 +149,8 @@ public class ImageServiceImpl implements IImageService {
         PHashCalculate pHashCalculate = new PHashCalculate();
         String imageHash = pHashCalculate.pHash(pHashCalculate.getBufferedImage(image_url));
         // 将图片哈希存入缓存中
-        HashMap<String, String> imageHashMap = (HashMap<String, String>) redisTemplate.opsForValue().get("image_hash");
+        HashMap<String, String> imageHashMap =
+                (HashMap<String, String>) redisTemplate.opsForValue().get("image_hash");
         imageHashMap.put(String.valueOf(res.getImage_id()), imageHash);
         redisTemplate.opsForValue().set("image_hash", imageHashMap);
         return Result.success();
@@ -227,7 +232,9 @@ public class ImageServiceImpl implements IImageService {
         String[] tags = imageEntity.getImage_tags().split("#");
         List<String> list = new ArrayList<>();
         for (String tag : tags) {
-            if (tag == null || tag.equals("")) continue;
+            if (tag == null || tag.equals("")) {
+                continue;
+            }
             list.add(tag);
         }
         ImageMessageResult imageResult = new ImageMessageResult();
@@ -295,6 +302,19 @@ public class ImageServiceImpl implements IImageService {
         // 获取图片id集合
         List<Long> imageIdList = favoritesRepository.findByUserId(userId, offset, size);
         List<ImageEntity> imageList = imageRepository.findAllById(imageIdList);
+        return Result.success(imageList);
+    }
+
+    /**
+     * 获取新发布的图片
+     *
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Override
+    public Result getNewImageList(int offset, int size) {
+        List<ImageEntity> imageList = imageRepository.findImageOrderByImageId(offset, size);
         return Result.success(imageList);
     }
 }

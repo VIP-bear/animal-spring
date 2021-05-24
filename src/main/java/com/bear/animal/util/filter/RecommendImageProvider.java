@@ -49,13 +49,11 @@ public class RecommendImageProvider {
         // 目标用户和相似用户图片去重
         List<Long> imageList = userAndImageMap.get(targetUserId);
         if (imageList == null) return;
-
         for (Long imageId : imageList) {
             if (set.contains(imageId)) {
                 set.remove(imageId);
             }
         }
-
         // 计算目标用户对候选图片感兴趣程度
         Map<Long, Double> targetUserXp = new HashMap<>();
         for (Long imageId : set) {
@@ -133,7 +131,6 @@ public class RecommendImageProvider {
                 }
             }
         }
-
     }
 
     // 用户-图片表转图片-用户表

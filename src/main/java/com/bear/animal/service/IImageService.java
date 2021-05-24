@@ -57,4 +57,12 @@ public interface IImageService {
      * @return
      */
     Result getFavoritesImageList(Long userId, Integer offset, int size);
+
+    /**
+     * 获取新发布的图片
+     * @param offset
+     * @param size
+     * @return
+     */
+    Result getNewImageList(int offset, int size);
 }

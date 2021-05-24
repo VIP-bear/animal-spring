@@ -86,20 +86,24 @@ public class RecommendServiceImpl implements IRecommendService {
         if (recommendImageList != null) {
             return Result.success(recommendImageList);
         }
-        // 获取用户行为记录数量，大于某个值表示用户为老用户，反之，为新用户
+        // 获取用户行为记录数量，根据用户行为数量选择不同的算法
         int recordCount = behaviorRepository.findRecordCountByUserId(userId);
-        if (recordCount < behaviorThreshold) {
-            // 使用基于用户的协同过滤推荐
-            recommendImageList = CollaborativeFiltering(userId);
-            log.info("使用基于用户的协同过滤推荐: {}", recommendImageList);
+        if (recordCount == 0) {
+            // 随机推荐图片
+            recommendImageList = imageRepository.findImageByViewCount(0,18);
+            log.info("随机推荐图片: {}", recommendImageList);
+        } else if (recordCount < behaviorThreshold) {
+            // 使用图片识别
+            recommendImageList = predictImage(userId);
+            log.info("使用图片识别推荐图片: {}", recommendImageList);
         } else if (recordCount < 2 * behaviorThreshold) {
             // 使用图片相似度比较算法
             recommendImageList = imageSimilarity(userId);
             log.info("使用图片相似度比较算法: {}", recommendImageList);
         } else {
-            // 使用图片识别
-            recommendImageList = predictImage(userId);
-            log.info("使用图片识别推荐图片: {}", recommendImageList);
+            // 使用基于用户的协同过滤推荐
+            recommendImageList = CollaborativeFiltering(userId);
+            log.info("使用基于用户的协同过滤推荐: {}", recommendImageList);
         }
         // 将推荐图片存入缓存中
         redisTemplate.opsForValue().set(String.valueOf(userId), recommendImageList, validTime, TimeUnit.MINUTES);
@@ -169,7 +173,6 @@ public class RecommendServiceImpl implements IRecommendService {
         List<ImageEntity> recommendImageList;
         // 随机获取n个用户
         List<UserEntity> userList = userRepository.getUserByRandom(n);
-        log.info("获取的n个用户: {}", userList);
         // 存储n个用户感兴趣的图片(历史行为)
         Map<Long, List<Long>> userAndImageMap = new HashMap<>(userList.size());
         // 获取用户感兴趣的图片(历史行为)
@@ -282,6 +285,10 @@ public class RecommendServiceImpl implements IRecommendService {
             set.add(imageEntity.getUser().getUser_id());
             if (recommendUserList.size() >= size) break;
         }
+        if (recommendUserList.size() != size) {
+            // 推荐的用户数量不足
+            recommendUserList.addAll(userRepository.getUserByRandom(size - recommendUserList.size()));
+        }
         // 推荐结果
         List<RecommendUserResult> recommendRes = new ArrayList<>();
         // 获取推荐用户发布的图片
@@ -295,5 +302,22 @@ public class RecommendServiceImpl implements IRecommendService {
             recommendRes.add(message);
         }
         return Result.success(recommendRes);
+    }
+
+    /**
+     * 搜索图片
+     *
+     * @param searchName
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Override
+    public Result searchImage(String searchName, int offset, int size) {
+        // 根据标签模糊搜索图片
+        String tag = "%" + searchName.trim() + "%";
+        List<Long> imageIdList = tagRepository.findByTag(tag, offset, size);
+        List<ImageEntity> imageList = imageRepository.findAllById(imageIdList);
+        return Result.success(imageList);
     }
 }

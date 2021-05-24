@@ -31,4 +31,11 @@ public interface IRecommendService {
      * @return
      */
     Result getRecommendUser(Long userId, int size);
+
+    /**
+     * 搜索图片
+     * @param searchName
+     * @return
+     */
+    Result searchImage(String searchName, int offset, int size);
 }

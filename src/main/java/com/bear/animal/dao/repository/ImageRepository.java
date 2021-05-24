@@ -94,4 +94,21 @@ public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
      */
     @Query(value = "select image_url from al_image where image_id = ?1", nativeQuery = true)
     String findImageUrlByImageId(Long imageId);
+
+    /**
+     * 根据浏览数获取图片
+     * @param size
+     * @return
+     */
+    @Query(value = "select * from al_image order by image_view_count desc limit ?1,?2", nativeQuery = true)
+    List<ImageEntity> findImageByViewCount(int offset, int size);
+
+    /**
+     * 根据图片id排序获取图片
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Query(value = "select * from al_image order by image_id desc limit ?1,?2", nativeQuery = true)
+    List<ImageEntity> findImageOrderByImageId(int offset, int size);
 }

@@ -41,7 +41,7 @@ public class AliyunProvider {
     /**
      * 上传图片到服务器，返回图片url
      * @param uploadFile
-     * @return 图片地址
+     * @rbeturn 图片地址
      */
     public String upload(MultipartFile uploadFile, String subDirectory) {
         URL url;

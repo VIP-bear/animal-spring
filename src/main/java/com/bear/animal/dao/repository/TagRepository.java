@@ -24,4 +24,14 @@ public interface TagRepository extends JpaRepository<TagEntity, Long> {
      */
     @Query(value = "select distinct image_id from al_tag where tag_name in ?1 limit ?2,?3", nativeQuery = true)
     List<Long> findByTagList(List<String> imageTag, int offset, int size);
+
+    /**
+     * 根据标签模糊查询图片
+     * @param tag
+     * @param offset
+     * @param size
+     * @return
+     */
+    @Query(value = "select distinct image_id from al_tag where tag_name like ?1 limit ?2,?3", nativeQuery = true)
+    List<Long> findByTag(String tag, int offset, int size);
 }

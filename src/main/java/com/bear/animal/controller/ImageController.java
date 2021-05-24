@@ -178,4 +178,34 @@ public class ImageController {
         return (T) recommendService.getRecommendRelatedImage(imageId, offsetNum, 15);
     }
 
+    /**
+     * 搜索图片
+     * @param searchName
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/image/search/{search_name}/{offset}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T searchImage(@PathVariable("search_name") String searchName,
+                             @PathVariable("offset") String offset) {
+        int offsetNum = Integer.parseInt(offset);
+        log.info("searchName: {}, offset: {}", searchName, offset);
+        return (T) recommendService.searchImage(searchName, offsetNum, 40);
+    }
+
+    /**
+     * 获取新发布的图片
+     * @param offset
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/image/new_image/{offset}")
+    @ResponseBody
+    @ResponseResult
+    public <T> T getNewImageList(@PathVariable("offset") String offset) {
+        log.info("offset: {}", offset);
+        Integer offsetNum = Integer.parseInt(offset);
+        return (T) imageService.getNewImageList(offsetNum, 40);
+    }
 }
