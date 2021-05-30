@@ -65,7 +65,7 @@ public class RecommendServiceImpl implements IRecommendService {
     // 推荐图片数量
     private static final int recommendNum = 18;
 
-    // 设置redis缓存中推荐图片过期时间为5分钟
+    // 设置redis缓存中推荐图片过期时间
     private final long validTime = 5;
 
     // 用户行为数量阈值

@@ -22,10 +22,16 @@ public class PredictImageProvider {
 
     static {
         map = new HashMap<>();
-        map.put("tiger", "老虎");
         map.put("cat", "猫");
-        map.put("sakura", "初音未来");
-        map.put("tear", "佐天泪子");
+        map.put("dog", "狗");
+        map.put("horse", "马");
+        map.put("cow", "牛");
+        map.put("sheep", "羊");
+        map.put("elephant", "大象");
+        map.put("spider", "蜘蛛");
+        map.put("butterfly", "蝴蝶");
+        map.put("chicken", "鸡");
+        map.put("squirrel", "松鼠");
     }
 
     @Autowired
